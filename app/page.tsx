@@ -142,7 +142,7 @@ export default function ChatPage() {
           <ScrollArea className="h-full">
             <div className="flex flex-col gap-6 p-4 md:p-8">
               {messages.length === 0 ? (
-                <WelcomeMessage />
+                <WelcomeMessage onSuggestionClick={sendMessage} />
               ) : (
                 messages.map((message) => (
                   <MessageItem

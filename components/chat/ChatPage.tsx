@@ -13,7 +13,7 @@ interface Conversation {
   timestamp: Date
 }
 
-export default function ChatPage() {
+export default function ChatPage( { onSuggestionClick }: { onSuggestionClick: (suggestion: string) => void } ) {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, reload, stop } = useChat()
   const [inputValue, setInputValue] = useState("")
   const [conversations, setConversations] = useState<Conversation[]>([
@@ -74,6 +74,7 @@ export default function ChatPage() {
             onReload={reload}
             copiedMessageId={copiedMessageId}
             onCopy={copyToClipboard}
+            onSuggestionClick={onSuggestionClick}
         />
         <ChatInput
           value={inputValue}

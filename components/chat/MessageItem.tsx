@@ -42,7 +42,7 @@ export function MessageItem({ message, copiedMessageId, onCopy, onReload }: Mess
                     message.role === "user" ? "bg-black text-white" : "bg-gray-50",
                 )}
             >
-                <div className="mb-1 font-medium">{message.role === "user" ? "You" : "AI Assistant"}</div>
+                {/* <div className="mb-1 font-medium">{message.role === "user" ? "You" : "AI Assistant"}</div> */}
                 <div className="space-y-2">
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}

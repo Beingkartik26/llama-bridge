@@ -12,6 +12,7 @@ interface ChatMessagesProps {
   onReload: () => void
   copiedMessageId: string | null
   onCopy: (text: string, messageId: string) => void
+  onSuggestionClick: (suggestion: string) => void
 }
 
 export function ChatMessages({ 
@@ -20,7 +21,8 @@ export function ChatMessages({
   error, 
   onReload,
   copiedMessageId,
-  onCopy 
+  onCopy,
+  onSuggestionClick
 }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -35,7 +37,7 @@ export function ChatMessages({
       <ScrollArea className="h-full">
         <div className="flex flex-col gap-6 p-4 md:p-8">
           {messages.length === 0 ? (
-            <WelcomeMessage />
+            <WelcomeMessage onSuggestionClick={onSuggestionClick} />
           ) : (
             messages.map((message) => (
               <MessageItem 
