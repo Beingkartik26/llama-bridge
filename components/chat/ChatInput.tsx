@@ -19,7 +19,7 @@ export function ChatInput({ value, onChange, onSubmit, isLoading, onStop }: Chat
             placeholder="Type your message..."
             value={value}
             onChange={onChange}
-            className="min-h-[60px] resize-none rounded-lg border py-3 pr-12 shadow-sm"
+            className="min-h-[60px] px-4 py-2 rounded-full bg-gray-100 text-lg text-black font-[500] text-gray-700 border border-gray-200 transition-colors"
             disabled={isLoading}
           />
           <div className="absolute bottom-3 right-3">

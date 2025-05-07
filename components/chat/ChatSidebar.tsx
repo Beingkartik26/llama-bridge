@@ -1,7 +1,9 @@
-import { Plus, Settings } from "lucide-react"
+import { Plus, Settings, UploadCloud, CheckCircle2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useRef, useState } from "react"
+import { Input } from "../ui/input"
 
 interface Conversation {
   id: string
@@ -22,6 +24,11 @@ export function ChatSidebar({
   onConversationSelect,
   onNewConversation,
 }: ChatSidebarProps) {
+  const [kbUploadName, setKbUploadName] = useState<string | null>(null)
+  const [kbUploading, setKbUploading] = useState(false)
+  const [kbUploadSuccess, setKbUploadSuccess] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const formatTimestamp = (date: Date) => {
     const now = new Date()
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
@@ -34,16 +41,20 @@ export function ChatSidebar({
   return (
     <div className="hidden border-r border-gray-300 md:flex md:w-80 md:flex-col">
       <div className="flex h-16 items-center justify-between border-b border-gray-300 px-4">
-        <h1 className="text-xl font-semibold">AI Chat</h1>
+        <h1 className="text-xl font-semibold">llama Bridge</h1>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" onClick={onNewConversation}>
-                <Plus className="h-4 w-4" />
-                <span className="sr-only">New conversation</span>
+              <Button
+                variant="default"
+                size="icon"
+                className="cursor-pointer h-6 w-6 rounded-full bg-black text-white shadow-lg hover:bg-primary/90 transition-all duration-150"
+                onClick={onNewConversation}
+                aria-label="Start a new conversation"
+              >
+                <Plus className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>New conversation</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
@@ -66,11 +77,62 @@ export function ChatSidebar({
             </div>
           ))}
         </ScrollArea>
-        <div className="border-t border-gray-300 p-4">
+        {/* <div className="border-t border-gray-300 p-4">
           <Button variant="outline" className="w-full justify-start" size="sm">
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </Button>
+        </div> */}
+        <div className="border-t border-gray-300 p-4">
+          <div className="flex flex-col items-start gap-2">
+            <label className="text-xs font-medium text-gray-600 mb-1 flex items-center gap-2">
+              <UploadCloud className="h-4 w-4" />
+              Upload Knowledge Base
+            </label>
+            <div className="flex items-center gap-2 w-full">
+              <Button
+                size="sm"
+                className="cursor-pointer flex items-center gap-2 bg-black text-white"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={kbUploading}
+              >
+                {kbUploading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadCloud className="h-4 w-4" />
+                )}
+                {kbUploading ? "Uploading..." : "Choose File"}
+              </Button>
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept=".txt,.md"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setKbUploadName(file.name);
+                  setKbUploading(true);
+                  setKbUploadSuccess(false);
+                  const formData = new FormData();
+                  formData.append("file", file);
+                  await fetch("/api/knowledge-base", { method: "POST", body: formData });
+                  setKbUploading(false);
+                  setKbUploadSuccess(true);
+                  setTimeout(() => setKbUploadSuccess(false), 2000);
+                }}
+              />
+              <span className="text-xs text-gray-500 truncate max-w-[120px]">
+                {kbUploadName ? kbUploadName : "No file chosen"}
+              </span>
+              {kbUploadSuccess && (
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+              )}
+            </div>
+            <span className="text-[11px] text-gray-400 mt-1">
+              Supported: .txt, .md
+            </span>
+          </div>
         </div>
       </div>
     </div>
