@@ -1,15 +1,11 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
 import { useChat } from "ai/react"
-import { MessageItem } from "@/components/chat/MessageItem"
-import { WelcomeMessage } from "@/components/chat/WelcomeMessage"
-import { LoadingMessage } from "@/components/chat/LoadingMessage"
-import { ErrorMessage } from "@/components/chat/ErrorMessage"
-import { ChatSidebar } from "@/components/chat/ChatSidebar"
-import { ChatHeader } from "@/components/chat/ChatHeader"
-import { ChatInput } from "@/components/chat/ChatInput"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ChatSidebar } from "./ChatSidebar"
+import { ChatHeader } from "./ChatHeader"
+import { ChatMessages } from "./ChatMessages"
+import { ChatInput } from "./ChatInput"
 
 interface Conversation {
   id: string
@@ -27,13 +23,6 @@ export default function ChatPage() {
   ])
   const [activeConversation, setActiveConversation] = useState<string>("1")
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-  }, [messages])
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -48,12 +37,6 @@ export default function ChatPage() {
     handleInputChange(e)
   }
 
-  const copyToClipboard = (text: string, messageId: string) => {
-    navigator.clipboard.writeText(text)
-    setCopiedMessageId(messageId)
-    setTimeout(() => setCopiedMessageId(null), 2000)
-  }
-
   const startNewConversation = () => {
     const newId = (conversations.length + 1).toString()
     const newConversation = {
@@ -63,6 +46,12 @@ export default function ChatPage() {
     }
     setConversations([newConversation, ...conversations])
     setActiveConversation(newId)
+  }
+
+  const copyToClipboard = (text: string, messageId: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedMessageId(messageId)
+    setTimeout(() => setCopiedMessageId(null), 2000)
   }
 
   return (
@@ -78,28 +67,14 @@ export default function ChatPage() {
           activeConversation={conversations.find((c) => c.id === activeConversation)}
           onNewConversation={startNewConversation}
         />
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div className="flex flex-col gap-6 p-4 md:p-8">
-              {messages.length === 0 ? (
-                <WelcomeMessage />
-              ) : (
-                messages.map((message) => (
-                  <MessageItem
-                    key={message.id}
-                    message={message}
-                    copiedMessageId={copiedMessageId}
-                    onCopy={copyToClipboard}
-                    onReload={reload}
-                  />
-                ))
-              )}
-              {isLoading && <LoadingMessage />}
-              {error && <ErrorMessage onReload={reload} />}
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
-        </div>
+        <ChatMessages
+            messages={messages}
+            isLoading={isLoading}
+            error={error || null}
+            onReload={reload}
+            copiedMessageId={copiedMessageId}
+            onCopy={copyToClipboard}
+        />
         <ChatInput
           value={inputValue}
           onChange={handleChange}
@@ -110,4 +85,4 @@ export default function ChatPage() {
       </div>
     </div>
   )
-}
+} 
