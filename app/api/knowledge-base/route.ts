@@ -1,8 +1,6 @@
 import { NextRequest } from "next/server";
 import { promises as fs } from "fs";
-import path from "path";
-
-const KNOWLEDGE_PATH = path.join(process.cwd(), "knowledge", "knowledge.txt");
+import { KNOWLEDGE_PATH } from "@/lib/knowledge-base";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -10,16 +8,8 @@ export async function POST(req: NextRequest) {
   const text = await file.text();
 
   // Ensure the folder exists
-  await fs.mkdir(path.dirname(KNOWLEDGE_PATH), { recursive: true });
+  await fs.mkdir(require("path").dirname(KNOWLEDGE_PATH), { recursive: true });
   await fs.writeFile(KNOWLEDGE_PATH, text, "utf8");
 
   return new Response("OK");
-}
-
-export async function getKnowledgeBase() {
-  try {
-    return await fs.readFile(KNOWLEDGE_PATH, "utf8");
-  } catch {
-    return "";
-  }
 }

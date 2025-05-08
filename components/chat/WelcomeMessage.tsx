@@ -15,7 +15,7 @@ const suggestions = [
 
 export function WelcomeMessage({ onSuggestionClick = () => { } }: WelcomeMessageProps) {
     return (
-        <div className="flex h-[70vh] flex-col items-center justify-center space-y-4 text-center">
+        <div className="flex h-[50vh] flex-col items-center justify-center space-y-4 text-center">
             {/* <div className="rounded-full bg-black p-2">
         <ChevronDown className="h-6 w-6 text-white" />
       </div> */}

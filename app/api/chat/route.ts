@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getKnowledgeBase } from "../knowledge-base/route";
+import { getKnowledgeBase } from "@/lib/knowledge-base";
 
 export async function POST(req: NextRequest) {
     const { prompt } = await req.json();
@@ -13,11 +13,14 @@ export async function POST(req: NextRequest) {
         ? `You are an AI assistant. Use the following knowledge base as reference material to answer the user's question. Do NOT pretend to be the person in the knowledge base. Instead, answer as a helpful assistant, citing information from the knowledge base if relevant.\n\nKnowledge Base:\n${knowledgeBase}\n\nUser Question:\n${prompt}`
         : prompt;
 
+    // Use OLLAMA_API_URL env variable, fallback to localhost
+    const ollamaApiUrl = process.env.OLLAMA_API_URL || "http://localhost:11434";
+
     // Call Ollama's local API
     //**
     // TODO: model should be a variable
     //  */
-    const ollamaRes = await fetch("http://localhost:11434/api/generate", {
+    const ollamaRes = await fetch(`${ollamaApiUrl}/api/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
