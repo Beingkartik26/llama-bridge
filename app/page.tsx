@@ -9,6 +9,7 @@ import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ChatHeader } from "@/components/chat/ChatHeader"
 import { ChatInput } from "@/components/chat/ChatInput"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { ChatRightSidebar } from "@/components/chat/ChatRightSidebar"
 
 interface Conversation {
   id: string
@@ -138,7 +139,7 @@ export default function ChatPage() {
           activeConversation={conversations.find((c) => c.id === activeConversation)}
           onNewConversation={startNewConversation}
         />
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden ">
           <ScrollArea className="h-full">
             <div className="flex flex-col gap-6 p-4 md:p-8">
               {messages.length === 0 ? (
@@ -168,6 +169,12 @@ export default function ChatPage() {
           onStop={() => setIsLoading(false)}
         />
       </div>
+      <ChatRightSidebar 
+        conversations={conversations}
+        activeConversation={activeConversation}
+        onConversationSelect={setActiveConversation}
+        onNewConversation={startNewConversation}
+      />
     </div>
   )
 }

@@ -83,57 +83,7 @@ export function ChatSidebar({
             Settings
           </Button>
         </div> */}
-        <div className="border-t border-gray-300 p-4">
-          <div className="flex flex-col items-start gap-2">
-            <label className="text-xs font-medium text-gray-600 mb-1 flex items-center gap-2">
-              <UploadCloud className="h-4 w-4" />
-              Upload Knowledge Base
-            </label>
-            <div className="flex items-center gap-2 w-full">
-              <Button
-                size="sm"
-                className="cursor-pointer flex items-center gap-2 bg-black text-white"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={kbUploading}
-              >
-                {kbUploading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <UploadCloud className="h-4 w-4" />
-                )}
-                {kbUploading ? "Uploading..." : "Choose File"}
-              </Button>
-              <Input
-                ref={fileInputRef}
-                type="file"
-                accept=".txt,.md"
-                className="hidden"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  setKbUploadName(file.name);
-                  setKbUploading(true);
-                  setKbUploadSuccess(false);
-                  const formData = new FormData();
-                  formData.append("file", file);
-                  await fetch("/api/knowledge-base", { method: "POST", body: formData });
-                  setKbUploading(false);
-                  setKbUploadSuccess(true);
-                  setTimeout(() => setKbUploadSuccess(false), 2000);
-                }}
-              />
-              <span className="text-xs text-gray-500 truncate max-w-[120px]">
-                {kbUploadName ? kbUploadName : "No file chosen"}
-              </span>
-              {kbUploadSuccess && (
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-              )}
-            </div>
-            <span className="text-[11px] text-gray-400 mt-1">
-              Supported: .txt, .md
-            </span>
-          </div>
-        </div>
+       
       </div>
     </div>
   )
